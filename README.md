@@ -38,7 +38,8 @@ fss-hacks DumberOS custom image files:
 -super_new.img (Rebuilt super containing DumberOS)
 -boot_a.bin (Stock TWRP-less boot image)
 -boot_a_twrp.bin (TWRP, for backup access)
--super.bin (Stock super — restore-to-stock reference)
+-super.bin (Stock super - you create this yourself!)
+
 Notes on these images: 
 boot_a_twrp.bin is a Russian-language TWRP build. Change it under Settings → the globe icon after first boot.
 super_new.img contains DumberOS 20260803-gapps30 plus the stock vendor_a and product_a from firmware version 1.1.1. If your stock firmware version differs, build your own — see the Long Path.

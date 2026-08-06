@@ -2,7 +2,7 @@
 
 
 **<u> Eeep Eeep The Labubu's Xiaomi Qin F21 Pro MT8766B Guide
-</u>**                       ![](/home/giannii/Downloads/IMG_5601(1).jpg)
+</u>**                       ![](IMG_5601(1).jpg )
 
 
 This is a (very long and technical) guide for everyone who has received the new v2/v3 Qin F21 Pro.
@@ -17,7 +17,7 @@ If it is connected to these, it will produce DAA_SIG_VERIFY_ERROR and STATUS_BRO
 
 These phones will also not enter traditional recovery modes using key combinations like the original F21. If you have any of these indicators, you probably have an F21 Pro V2:
 
-<img src="file:///home/giannii/Downloads/IMG_5611.JPG" title="" alt="" width="206">        <img title="" src="file:///home/giannii/Pictures/f08271bd66072647dcaa210918bf767a76f5fe3e.webp" alt="" width="394">
+<img src="file:///home/giannii/Downloads/IMG_5611.JPG" title="" alt="" width="206">        <img title="" src="f08271bd66072647dcaa210918bf767a76f5fe3e.webp" alt="" width="394">
 
 <sub>Internal back of phone with A666-MB-V0.2</sub>      <sub>Red paper charging cable insert, serial number</sub>
 

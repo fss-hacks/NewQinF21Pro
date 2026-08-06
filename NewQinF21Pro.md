@@ -1,8 +1,9 @@
-# # ROM and Guide For Xiaomi Qin F21 Pro            with MT8766B CPU
+# # ROM and Guide For Xiaomi Qin F21 Pro with MT8766B CPU
 
 
 **<u> Eeep Eeep The Labubu's Xiaomi Qin F21 Pro MT8766B Guide
-</u>**                       ![](IMG_5601(1).jpg )
+</u>**
+![](IMG_5601(1).jpg )
 
 
 This is a (very long and technical) guide for everyone who has received the new v2/v3 Qin F21 Pro.
@@ -70,12 +71,14 @@ On MT8766 there is no BROM recovery path. SP Flash Tool and SN Write Tool cannot
 Skip if already unlocked. 
 
 Enable Developer options (tap Build number 7×), then OEM unlocking and USB debugging. 
+
 `adb devices`
 
 `adb reboot bootloader`
 
-`fastboot devices
-fastboot flashing unlock`
+`fastboot devices`
+
+`fastboot flashing unlock`
 
 ``Confirm on the phone. This wipes the device. Boot back into Android and re-enable USB debugging. 
 
@@ -88,58 +91,79 @@ neither yet, do Step 3 first and come back.
 `adb shell lpdump`
 
 Compare against: 
-`super block device size 4294967296
-vendor_a 633,056 sectors (324,124,672 bytes)
-product_a 437,976 sectors (224,243,712 bytes)
-header flags virtual_ab_device`
+`super block device size 4294967296'
+
+`vendor_a 633,056 sectors (324,124,672 bytes)`
+
+`product_a 437,976 sectors (224,243,712 bytes)`
+
+header flags virtu al_ab_device`
 
 If the super size or the vendor/product sizes differ, stop and use the Long Path at the end — your firmware version isn’t the one this image
 was built from, and flashing it would pair DumberOS with a mismatched vendor. 
- 
-**Step 3 — Install TWRP 
-**** You need block-level access to back up super. TWRP is the simplest route. 
+
+ 
+<b>Step 3 — Install TWRP</b>
+
+You need block-level access to back up super. TWRP is the simplest route. 
 Already rooted with Magisk? Skip this step entirely and run the Step 4 commands with `su -c `instead. That leaves boot_a untouched. 
-`adb reboot bootloader
-fastboot devices
-fastboot flash boot_a boot_a_twrp.bin
-fastboot reboot`
+
+`adb reboot bootloader`
+
+`fastboot devices`
+
+`fastboot flash boot_a boot_a_twrp.bin`
+
+`fastboot reboot`
 
 boot_a is a physical partition, so ordinary bootloader fastboot writes it — no mtkclient required. 
-The phone boots into TWRP (in Russian). Confirm adb sees it: 
-`adb devices `# expect: <serial> recovery
 
-The F21 Pro has no separate recovery partition — it is recovery-as-boot, so boot_a holds the ramdisk. TWRP has now replaced it, and the phone
-will boot nothing else until Step 6 restores boot_a.bin. 
+The phone boots into TWRP (in Russian). Confirm adb sees it: 
+
+`adb devices` `# expect: <serial> recovery
+
+The F21 Pro has no separate recovery partition — it is recovery-as-boot, so boot_a holds the ramdisk. TWRP has now replaced it, and the phone will boot nothing else until Step 6 restores boot_a.bin. 
 
 
 **Step 4 - Backup**
 
 ****Do not skip this. Use cat, never dd — dd writes its summary to stdout and corrupts the output by ~91 bytes. On Windows use cmd.exe, not PowerShell, which mangles binary redirects. 
-`adb exec-out "cat /dev/block/by-name/super" > my_super.bin
-adb exec-out "cat /dev/block/by-name/vbmeta_a" > my_vbmeta_a.bin
-adb exec-out "cat /dev/block/by-name/md1img_a" > my_md1img_a.bin
-adb exec-out "cat /dev/block/by-name/nvram" > my_nvram.bin
-adb exec-out "cat /dev/block/by-name/nvdata" > my_nvdata.bin`
+
+`adb exec-out "cat /dev/block/by-name/super" > my_super.bin`
+
+`adb exec-out "cat /dev/block/by-name/vbmeta_a" > my_vbmeta_a.bin`
+
+`adb exec-out "cat /dev/block/by-name/md1img_a" > my_md1img_a.bin`
+
+`adb exec-out "cat /dev/block/by-name/nvram" > my_nvram.bin`
+
+`adb exec-out "cat /dev/block/by-name/nvdata" > my_nvdata.bin`
 
 `adb exec-out "cat /dev/block/by-name/nvcfg" > my_nvcfg.bin`
 
 Verify super byte-for-byte: 
-`ls -l my_super.bin # expect 4294967296
-md5sum my_super.bin
-adb shell md5sum /dev/block/by-name/super`
+
+`ls -l my_super.bin # expect 4294967296`
+
+`md5sum my_super.bin`
+
+`adb shell md5sum /dev/block/by-name/super`
 
 ``Do not continue until those hashes match. 
 
 Copy the whole set to separate media. 
 <u>The last three files hold your IMEI and RF calibration. They are unique to your handset and no tool can regenerate them. </u>
-
  
 
 **Step 5 — Flash **
-`adb reboot bootloader
-fastboot devices
-fastboot flash super super_new.img
-fastboot --disable-verity --disable-verification flash vbmeta_a my_vbmeta_a.bin`
+
+`adb reboot bootloader`
+
+`fastboot devices`
+
+`fastboot flash super super_new.img`
+
+`fastboot --disable-verity --disable-verification flash vbmeta_a my_vbmeta_a.bin`
 
 <sub>Flash the sparse super_new.img as-is — do not convert it. Takes several minutes; do not interrupt. 
 Use your own my_vbmeta_a.bin here. The disable flags are rewritten in transit, so no separate “empty vbmeta” file is needed. GSIs are signed with their own keys and will not pass stock verification without this. </sub>
@@ -147,9 +171,12 @@ Use your own my_vbmeta_a.bin here. The disable flags are rewritten in transit, s
 
 <b>Step 6 — Restore the stock boot image</b>
 This removes TWRP. It is required — DumberOS is a GSI and cannot boot on a TWRP ramdisk. 
-`fastboot flash boot_a boot_a.bin
-fastboot getvar current-slot # expect: a
-fastboot reboot`
+
+`fastboot flash boot_a boot_a.bin`
+
+`fastboot getvar current-slot` # expect: a
+
+`fastboot reboot`
 
 Keep boot_a_twrp.bin — reflashing it is how you get recovery back later. 
 
@@ -159,8 +186,11 @@ Keep boot_a_twrp.bin — reflashing it is how you get recovery back later.
 Expect an Orange State warning; press power to continue. I did not get one but you may. 
 First boot takes 5–10 minutes. A blank or static screen at minute four is normal. Do not interrupt or unplug. 
 If the phone lands in fastbootd (coloured text) or a “No command” screen instead of booting, a stale boot-control flag is sending it to recovery: 
+
 `fastboot reboot bootloader`
-`fastboot erase para `# 'para' is MTK's misc partition
+
+`fastboot erase para` `# 'para' is MTK's misc partition
+
 `fastboot reboot`
 
 Leave boot_para alone — despite the name, it is a different partition. 
@@ -174,13 +204,14 @@ Once up, check Settings → About phone: your IMEI should be present and match w
 All of these run from bootloader fastboot, reachable whatever state the system is in:
 Problem Fix
 Won’t boot / want stock back?
-`fastboot flash super my_super.bin
+`fastboot flash super my_super.bin`
+
 `Need recovery access?
-`fastboot flash boot_a boot_a_twrp.bin `(Boots to TWRP only)
+`fastboot flash boot_a boot_a_twrp.bin` `(Boots to TWRP only)
 dm-verity corruption message? 
 Repeat the vbmeta command in Step 5
 Stuck in recovery / fastbootd?
-`fastboot erase para `
+`fastboot erase para` `
 
 
 
